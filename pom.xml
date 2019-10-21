@@ -1,0 +1,153 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.java.soap</groupId>
+	<artifactId>SpringSoap</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
+	<name>SpringSoapExample</name>
+	<url>http://maven.apache.org</url>
+	<dependencies>
+
+
+		<!-- apache cxf jax-ws 3.0.2 -->
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-frontend-jaxws</artifactId>
+			<version>${cxf.version}</version>
+			<scope>${cxf.scope}</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-transports-http</artifactId>
+			<version>${cxf.version}</version>
+			<scope>${cxf.scope}</scope>
+		</dependency>
+
+		<!-- spring framework 4.1.0 -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<!-- jax-ws runtime from sun -->
+		<!-- <dependency> <groupId>com.sun.xml.ws</groupId> <artifactId>jaxws-rt</artifactId> 
+			<version>${sun.jaxws.version}</version> <scope>${jaxws.scope}</scope> </dependency> -->
+
+		<!-- jax-ws runtime from glassfish Metro - project tango -->
+		<!-- <dependency> <groupId>org.glassfish.metro</groupId> <artifactId>webservices-rt</artifactId> 
+			<version>${metro.jaxws.version}</version> <scope>${jaxws.scope}</scope> </dependency> -->
+
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.2</version>
+				<configuration>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<warSourceDirectory>WebContent</warSourceDirectory>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+				</configuration>
+			</plugin>
+			<!-- plugin 3-maven wsgen goal -->
+			<!-- <plugin> <groupId>org.jvnet.jax-ws-commons</groupId> <artifactId>jaxws-maven-plugin</artifactId> 
+				<version>2.3</version> <executions> <execution> <id>basic</id> <phase>generate-sources</phase> 
+				<goals> <goal>wsgen</goal> </goals> </execution> </executions> <configuration> 
+				<keep>true</keep> <sei>org.java.soap.service.EmployeeService</sei> <sei>org.java.soap.service.BookServiceImpl</sei> 
+				<genWsdl>true</genWsdl> <resourceDestDir>${basedir}\generated\resources\wsdl</resourceDestDir> 
+				<sourceDestDir>${basedir}\generated\java\source</sourceDestDir> <verbose>true</verbose> 
+				<target>2.1</target> </configuration> </plugin> -->
+
+			<!-- plugin 3- apache cxf codegen wsdl2java goal -->
+			<plugin>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-java2ws-plugin</artifactId>
+				<version>${cxf.version}</version>
+				<executions>
+					<execution>
+						<id>generate-wsdl</id>
+						<phase>process-classes</phase>
+						<configuration>
+							<className>org.java.soap.service.EmployeeService</className>
+							<serviceName>EmployeeService</serviceName>
+							<address>http://localhost:8080/SpringSoap/services/EmployeeService</address>
+							<outputFile>${basedir}\generated\resources\wsdl\EmployeeService.wsdl</outputFile>
+							<argline>-createxsdimports</argline>
+							<genWsdl>true</genWsdl>
+							<verbose>true</verbose>
+							<skip>false</skip>
+							<genWrapperbean>false</genWrapperbean>
+							<genClient>false</genClient>
+							<genServer>false</genServer>
+						</configuration>
+						<goals>
+							<goal>java2ws</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>generate-book-wsdl</id>
+						<phase>process-classes</phase>
+						<configuration>
+							<className>org.java.soap.service.BookServiceImpl</className>
+							<serviceName>BookService</serviceName>
+							<address>http://localhost:8080/SpringSoap/services/BookService</address>
+							<outputFile>${basedir}\generated\resources\wsdl\BookService.wsdl</outputFile>
+							<argline>-createxsdimports</argline>
+							<genWsdl>true</genWsdl>
+							<verbose>true</verbose>
+							<skip>false</skip>
+							<genWrapperbean>false</genWrapperbean>
+							<genClient>false</genClient>
+							<genServer>false</genServer>
+						</configuration>
+						<goals>
+							<goal>java2ws</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
+	<!-- properties -->
+	<properties>
+		<cxf.version>3.0.2</cxf.version>
+		<spring.version>4.1.0.RELEASE</spring.version>
+		<cxf.scope>compile</cxf.scope>
+		<compileSource>1.7</compileSource>
+		<maven.compiler.target>1.7</maven.compiler.target>
+		<maven.compiler.source>1.7</maven.compiler.source>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+</project>
